@@ -1,7 +1,11 @@
 import json
 import requests
 import os
+import time
 from slackclient import SlackClient
+
+
+
 
 def get_token():
     file_dir = os.path.dirname(__file__)
@@ -13,32 +17,34 @@ def get_token():
 def get_weather(cityname):
     return requests.get(f'https://api.openweathermap.org/data/2.5/weather?q={cityname}&appid=78df9f2f039e30df1a3ecc3b9591e231&units=metric').json()
 
-weather_data = get_weather('Taipei')
+weather_data = get_weather('Hsinchu')
 data = json.dumps(weather_data)
 
 def data_do():
     w_list = weather_data.get('weather')
     w_name = weather_data.get('name')
     w_main = weather_data.get('main')
+
     name = '查詢地點:' + w_name + '\n'
     temp = '\n現在溫度:' + str(round(w_main['temp'])) + '度'
-    
-    result = name + temp
-    print(type(w_list))
+    result = name + temp 
     return result
+
 data_do()
 
 
 def slack():
     slack_token = get_token()
+
+
     param = {
         'token': slack_token,
-        'channel': '#general',
+        'channel': '#test',
         'text': data_do(),
     }   
     r = requests.get('https://slack.com/api/chat.postMessage', params=param)
 
-# slack()
+slack()
 
 
 with open('weather_data.json', 'w') as file:
